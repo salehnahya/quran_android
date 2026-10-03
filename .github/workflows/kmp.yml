@@ -1,0 +1,70 @@
+name: Quran KMP
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main, 'redesign/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kmp-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android:
+    name: KMP Android and tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: multiplatform
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Test shared behavior and build Android
+        run: ./gradlew :core:model:jvmTest :core:domain:jvmTest :core:data:jvmTest :feature:memorization:jvmTest :androidApp:assembleDebug :androidApp:lintDebug --stacktrace
+      - name: Preserve test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shared-test-reports
+          path: |
+            multiplatform/core/**/build/reports/tests/
+            multiplatform/feature/**/build/reports/tests/
+          if-no-files-found: warn
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: quran-kmp-debug
+          path: multiplatform/androidApp/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+  ios:
+    name: KMP iOS framework
+    runs-on: macos-latest
+    timeout-minutes: 40
+    defaults:
+      run:
+        working-directory: multiplatform
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Compile shared iOS UI
+        run: ./gradlew :composeApp:linkDebugFrameworkIosSimulatorArm64 --stacktrace
+      - name: Build iOS simulator app
+        run: xcodebuild -project iosApp/QuranApp.xcodeproj -scheme QuranApp -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
