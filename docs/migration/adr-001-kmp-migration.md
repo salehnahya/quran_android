@@ -1,6 +1,6 @@
 # ADR-001: Incremental Quran Android migration to KMP
 
-Status: Proposed
+Status: Accepted; implementation continues in `multiplatform/`
 
 ## Context
 
@@ -10,7 +10,7 @@ The source is https://github.com/quran/quran_android at commit 99506c080. It alr
 
 Keep the original Android app available during migration. Add a new multiplatform app composition root and migrate one working reading flow before extending to audio, downloads, translations, and bookmarks. Use Compose Multiplatform for shared UI, with Stitch supplying the visual design. Stitch HTML exports are design references; Kotlin implementation is still required.
 
-Proposed modules (not yet created):
+Original target module plan (some capabilities remain migration follow-ups):
 
 | Module | Responsibility |
 | --- | --- |
@@ -51,7 +51,7 @@ Preserve upstream LICENSE and contributor credits. Inventory source-specific per
 
 ## Current state
 
-Repository cloned locally; no GitHub account fork has been created. No KMP modules, UI redesign or build validation have been completed. Stitch currently requires Google sign-in. This document records the proposed migration, not an implemented architecture.
+The fork is https://github.com/salehnahya/quran_android, with draft PR #1. The new app lives in `multiplatform/`, with shared Navigation 3, reading, persisted study progress, repetition, English/Arabic RTL, children mode, Qibla and native local audio. Stitch references and shared components are implemented. AI is deferred by user request. Current architecture and actual build evidence are maintained in `multiplatform/docs/architecture.md` and `multiplatform/docs/qa/verification.md`. This initial module plan is broader than the delivered first migration slice; translations, hosted reciter catalogs and downloads remain follow-ups.
 
 ## Revisit triggers
 

@@ -15,7 +15,7 @@ For iOS, open `iosApp/QuranApp.xcodeproj` and select the shared `QuranApp` schem
 
 ```sh
 ./gradlew :composeApp:linkDebugFrameworkIosSimulatorArm64
-xcodebuild -project iosApp/QuranApp.xcodeproj -scheme QuranApp -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
+xcodebuild -project iosApp/QuranApp.xcodeproj -scheme QuranApp -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' ARCHS=arm64 ONLY_ACTIVE_ARCH=YES CODE_SIGNING_ALLOWED=NO build
 ```
 
 ## Features and boundaries

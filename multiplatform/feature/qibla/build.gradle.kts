@@ -5,6 +5,7 @@ kotlin {
  commonMain.dependencies { implementation(project(":core:model"))
 implementation(project(":core:domain"))
 implementation(project(":core:designsystem"))
+implementation("org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose:2.10.0")
 implementation(compose.runtime)
 implementation(compose.foundation)
 implementation(compose.material3)

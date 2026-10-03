@@ -4,10 +4,10 @@ The user authorized an acceptance agent to review each PR and merge after checks
 
 Scope: `salehnahya/quran_android`, PRs targeting `main`. No automated writes to upstream `quran/quran_android`.
 
-For each changed PR head:
+Review drafts, but merge only after they are ready for review. For each changed PR head:
 
 1. Review the full diff and relevant surrounding code. Check domain behavior, Navigation 3, KMP boundaries, persistence, source integrity, RTL/accessibility, child mode and playback lifecycle.
-2. Require `KMP Android and tests` and `KMP iOS framework` from the Quran KMP workflow, plus every required repository check. The iOS job builds both the shared framework and the simulator host app.
+2. Require `KMP Android and tests` and `KMP iOS framework` and `KMP Android runtime` from the Quran KMP workflow, plus every required repository check. The iOS job builds both the shared framework and the simulator host app.
 3. Resolve all actionable review findings before acceptance. Green CI alone is insufficient.
 4. Re-fetch head/base/checks immediately before accepting. A new head invalidates the previous review.
 5. Submit APPROVE or REQUEST_CHANGES. GitHub prevents authors approving their own PRs: if the connected identity is the author, record the agent's acceptance decision with a COMMENT instead. This is not a formal GitHub approval and cannot satisfy required-review protections.

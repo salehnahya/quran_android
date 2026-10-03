@@ -5,6 +5,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
@@ -22,13 +25,24 @@ fun QiblaScreen(language: AppLanguage, compass: CompassProvider) {
     var heading by remember { mutableStateOf<Double?>(null) }
     var live by remember { mutableStateOf(false) }
     var unavailable by remember { mutableStateOf(false) }
-    DisposableEffect(compass) { onDispose { compass.stop() } }
+    val lifecycleOwner = LocalLifecycleOwner.current
 
     fun stopCompass() {
         compass.stop()
         live = false
         heading = null
         unavailable = false
+    }
+
+    DisposableEffect(compass, lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_STOP) stopCompass()
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+            compass.stop()
+        }
     }
 
     Column(

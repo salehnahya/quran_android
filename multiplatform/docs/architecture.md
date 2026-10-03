@@ -1,6 +1,6 @@
 # Quran KMP architecture
 
-Android and iOS share Compose screens, immutable verse identities, offline text, study progress contracts, repetition logic and Qibla mathematics. Platform adapters own media players, file selection and local settings. Feature modules depend on domain contracts and the shared design system; the composition root injects concrete data adapters. Domain has no Compose, Android or networking imports.
+Android and iOS share Compose screens, immutable verse identities, offline text, study progress contracts, repetition logic and Qibla mathematics. Platform adapters own media players, file selection, native compass readings and local settings. Android uses a service-owned Media3 ExoPlayer and MediaSession with a MediaController adapter; iOS uses AVAudioPlayer with a retained Objective-C delegate and an active playback audio session. Android backup extraction rules exclude study settings from cloud backup and device transfer. Feature modules depend on domain contracts and the shared design system; the composition root injects concrete data adapters. Domain has no Compose, Android or networking imports.
 
 ```mermaid
 flowchart TD
@@ -19,9 +19,9 @@ flowchart TD
 
 `VerseId` checks Hafs/Madani chapter and verse bounds. The canonical 114 chapter counts total 6,236 and match the bundled Tanzil metadata. Source Arabic must remain unchanged. Interface localization and Quran translations are separate capabilities; an English interface must not imply an available English translation.
 
-`RepeatSession` counts completed recitations. N means N total playbacks. Until-memorized mode holds the current verse until the learner explicitly confirms memorization. An audio completion advances the state; a play click does not. Memorized progress is an explicit learner assertion, not an automatic consequence of listening.
+`RepeatSession` counts completed recitations. N means N total playbacks. Until-memorized mode holds the current verse until the learner explicitly confirms memorization. An audio completion advances the state; a play click does not. The feature presentation controller invalidates pending callbacks with a generation token when paused, reset or disposed. It stops playback when memorization is confirmed and rejects manual double-counting while playing. Fixed-count completion still permits a separate memorization assessment. Memorized progress is an explicit learner assertion, not an automatic consequence of listening.
 
-`QiblaCalculator` calculates the initial great-circle bearing from true north to the Kaaba at 21.4225, 39.8262. It rejects invalid coordinates and returns no direction at the Kaaba and its antipode. Manual coordinates are usable without device permissions. Compass sensors require platform calibration and magnetic declination before displaying device-relative guidance.
+`QiblaCalculator` calculates the initial great-circle bearing from true north to the Kaaba at 21.4225, 39.8262. It rejects invalid coordinates and returns no direction at the Kaaba and its antipode. Manual coordinates are usable without device permissions. The Android native adapter reads rotation-vector sensors, adjusts display orientation and applies `GeomagneticField` declination using the supplied coordinates. The iOS adapter reads Core Location true heading after optional when-in-use location access. Both suppress unreliable readings; the shared screen stops sensors when backgrounded or disposed and preserves manual calculation when sensors or permission are unavailable. Physical-device calibration and direction accuracy still require hardware verification.
 
 `StudyProgress` stores last-read verse, bookmarks, memorized verses, language and child mode. Data adapters must tolerate malformed local values and persist valid canonical verse identities. Child mode is a local family learning preference. Parent authentication and account enforcement require a separate future implementation.
 
