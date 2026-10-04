@@ -111,7 +111,12 @@ fun MemorizationScreen(
             clearAudio()
             endAyah = next.coerceIn(verse.id.ayah..maxEnd)
         }
-        if (selectedIds.size > 1) QuranText(appString(QuranStrings.practiceCurrentPosition, selectedIds.indexOf(state.currentVerse) + 1, selectedIds.size))
+        if (selectedIds.size > 1) {
+            PracticeProgressStatus(
+                text = appString(QuranStrings.practiceCurrentPosition, selectedIds.indexOf(state.currentVerse) + 1, selectedIds.size),
+                testTag = "practice_position",
+            )
+        }
         PracticeVerseCard(currentVerse, hidden) { hidden = it }
         PracticeRepeatCard(
             state, count, until, playing,

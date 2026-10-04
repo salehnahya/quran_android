@@ -19,7 +19,10 @@ fun PracticeRepeatCard(
     onReset: () -> Unit,
 ) {
     PaperCard {
-        QuranText(appString(QuranStrings.repetitions, state.completedRepetitions))
+        PracticeProgressStatus(
+            text = appString(QuranStrings.repetitions, state.completedRepetitions),
+            testTag = "practice_repetitions",
+        )
         Row {
             QuranIconButton(appString(QuranStrings.decreaseRepetitions), { onCountChanged(count - 1) }, enabled = count > 1) { QuranText("−") }
             QuranText("$count")

@@ -9,3 +9,7 @@ Eight meaningful common controller tests cover exact source keys, one-ayah compl
 Combined verification passed: 109 JVM tests, shared JVM UI compilation, Android app and instrumentation APK assembly (final incremental repair run 3 seconds). Compilation initially caught missing instrumentation dependencies and an incorrect locale import; these were repaired without changing production behavior. Independent Sol 6.1 source review cleared the slice. Native presentation/runtime and iOS CI acceptance remain pending; no local native result is claimed.
 
 This slice is explicitly one-ayah listening. Continuous chapter queues, native notification/interruption behavior, external-control state synchronization, physical-device audio and iOS runtime acceptance remain product work. AI is deferred.
+
+## Accepted CI checkpoint
+
+PR #9 merged as f72f634add215ac4ff7e5553e158a522564638b3 after run 37183422856 passed Android/tests, Android runtime and iOS framework/simulator app at reviewed head 83dbbea289c0dcf65c55c61d03c9d6e4146df59e. Independent artifact inspection of 11295419718 confirmed 15 native tests, zero failures/skips, including both new reader presentation tests; all 25 screenshots were preserved. The PR was already merged on final refresh; no duplicate merge was attempted. Post-merge authored COMMENT 5404699404 is an acceptance record, not formal GitHub approval.

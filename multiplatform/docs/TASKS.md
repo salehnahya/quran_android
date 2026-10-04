@@ -27,7 +27,9 @@ This list tracks the requested app, beyond individual pull requests. AI integrat
 
 ## Next unblocked batch
 
-Download management PR #8 merged as `f3017c42ff6f475937c455fd9b64cfbb129e5cfc`. Its reviewed head `478a05cca` passed all three CI gates, 13 native tests and independent inspection of the new downloads capture. The next slice, explicit one-ayah reader listening, is implemented and independently reviewed: 109 JVM tests and Android app/test compilation passed. Published as PR #9 at `83dbbea289c0dcf65c55c61d03c9d6e4146df59e`; its Android/test CI passed, with native runtime and iOS acceptance still running. The next direct memorized-ayah review slice is implemented, with a real navigation/persistence journey authored and combined build passed (109 JVM tests and Android app/test APKs). Continue the task list while checks run.
+Download management PR #8 merged as `f3017c42ff6f475937c455fd9b64cfbb129e5cfc`. Exact-ayah reader listening PR #9 merged as `f72f634add215ac4ff7e5553e158a522564638b3`: all three CI gates passed at reviewed head `83dbbea289c0dcf65c55c61d03c9d6e4146df59e`, including 15 native tests with no failures/skips. Independent source and artifact reviews are clear; authored acceptance COMMENT `5404699404` records evidence without claiming formal approval.
+
+Direct memorized-ayah review is published as PR #10; source review and the combined build passed (109 JVM tests and Android app/test APKs), while current-main CI acceptance remains pending. Children practice polite progress semantics and an Arabic/RTL/150%-font/240dp native test are implemented. Review caught test setup initialization/partial-cleanup risk, now repaired; final repair compilation passed. No spoken screen-reader or child native execution result is claimed. Continue the task list while checks run.
 
 ## Remaining product work
 
