@@ -6,7 +6,10 @@ import androidx.compose.runtime.getValue
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.HorizontalDivider
 import org.quran.app.designsystem.QuranBottomSheet
 import org.quran.app.designsystem.QuranTextButton
 import androidx.compose.material3.MaterialTheme
@@ -39,14 +42,14 @@ internal fun VerseReaderItem(
 ) {
     var actionsVisible by remember { mutableStateOf(false) }
 
-    Column(modifier = Modifier.testTag("reader_verse_${verse.id.surah}_${verse.id.ayah}"), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(modifier = Modifier.fillMaxWidth().testTag("reader_verse_${verse.id.surah}_${verse.id.ayah}").padding(horizontal = 16.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Text("${verse.id.surah}:${verse.id.ayah}", style = MaterialTheme.typography.labelLarge)
-            if (verse.id == progress.lastRead) Text(appString(QuranStrings.currentReadingPosition))
+            QuranTextButton(appString(QuranStrings.moreActions), modifier = Modifier.testTag("verse_actions_${verse.id.surah}_${verse.id.ayah}"), onClick = { actionsVisible = true })
         }
         ArabicVerse(verse.arabic, progress.childMode, textSize = readingPreferences.arabicTextSize)
         translationForVerse(verse.id)
-        QuranTextButton(appString(QuranStrings.moreActions), modifier = Modifier.testTag("verse_actions_${verse.id.surah}_${verse.id.ayah}"), onClick = { actionsVisible = true })
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
     }
 
     if (actionsVisible) {

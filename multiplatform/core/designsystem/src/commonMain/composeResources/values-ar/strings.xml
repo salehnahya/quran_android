@@ -182,4 +182,5 @@
     <string name="children_large_text">يبقى النص العربي كبيرًا في وضع الأطفال.</string>
     <string name="download_removal_failed">تعذر إكمال تحديث التنزيل. حدّث القائمة للتحقق من حالته الحالية.</string>
     <string name="remove_download_description">حذف تسجيل %1$s للسورة %2$d، الآية %3$d</string>
+    <string name="navigation_options">المزيد من الخيارات</string>
 </resources>

@@ -16,7 +16,11 @@ This list tracks the requested app, beyond individual pull requests. AI integrat
 - [x] Separate persisted Arabic/translation reading sizes (PR #6, all three CI checks passed).
 - [x] Current-head CI review/acceptance policy for Android tests/runtime and iOS framework/app.
 
-## Active batch
+## Current priority
+
+The user rejected the Stitch redesign and explicitly requested the original Quran Android native design. Native resource colors, flat index rows/tabs and reading-first overflow navigation are being restored on feature/quran-native-design. This batch takes priority over further redesign proposals. Existing KMP modules, Navigation 3, verified corpus and persisted behavior remain required. Combined source review and build passed (109 JVM tests and app/test APKs); fresh native visual acceptance is pending. Direct memorized-ayah review PR #10 merged as 48ea4e78897a0f901a85d123d12aa3ac777d15c6 after all three CI gates and 16 native tests passed.
+
+## Earlier batch
 
 - [x] Stitch refinement request and generated Library/Reader design direction inspected.
 - [x] Shared navigation vectors, compact single library heading and full-row chapter actions; independent source review clear.

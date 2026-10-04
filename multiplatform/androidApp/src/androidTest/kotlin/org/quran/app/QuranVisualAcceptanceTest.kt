@@ -96,6 +96,7 @@ class QuranVisualAcceptanceTest {
             try {
                 verifyLibrary(labels)
                 capture("library", dark)
+                verifyLongIndexAndReader(labels, dark)
                 compose.onNodeWithText(labels.openLastRead).performScrollTo().performClick()
                 verifyReader(labels)
                 capture("reader", dark)
@@ -134,6 +135,24 @@ class QuranVisualAcceptanceTest {
         assertTouchTarget(read)
     }
 
+    private fun verifyLongIndexAndReader(labels: Labels, dark: Boolean) {
+        compose.onNodeWithTag("library_list").performScrollToNode(hasTestTag("surah_open_114"))
+        val lastRow = compose.onNodeWithTag("surah_open_114")
+        assertTouchTarget(lastRow)
+        assertNoTextOverflow(compose.onNode(hasText("114") and hasAnyAncestor(hasTestTag("surah_open_114")), useUnmergedTree = true))
+        val longest = quran.chapters().maxBy { if (labels == Labels.Arabic) it.arabicName.length else it.englishName.length }
+        compose.onNodeWithTag("library_list").performScrollToNode(hasTestTag("surah_open_${longest.number}"))
+        compose.onNodeWithTag("surah_open_${longest.number}").performClick()
+        val title = compose.onNodeWithTag("screen_title", useUnmergedTree = true)
+        title.assertTextEquals(if (labels == Labels.Arabic) longest.arabicName else longest.englishName)
+        assertNoTextOverflow(title)
+        compose.onNodeWithTag("reader_verse_${longest.number}_1").assertIsDisplayed()
+        assertReadingChrome(labels)
+        capture("long-title-reader", dark)
+        navigate(labels.library)
+        compose.onNodeWithTag("library_list").performScrollToIndex(0)
+    }
+
     private fun verifyReader(labels: Labels) {
         compose.onNodeWithTag("reader_verse_1_1").assertIsDisplayed()
         assertReadableText(quran.verses(1).first().arabic, scroll = true)
@@ -141,7 +160,7 @@ class QuranVisualAcceptanceTest {
         actions.performScrollTo().assertIsDisplayed()
         assertTouchTarget(actions)
         assertNoTextOverflow(compose.onNode(hasText(labels.verseActions) and hasAnyAncestor(hasTestTag("verse_actions_1_1")), useUnmergedTree = true))
-        assertNavigation(labels)
+        assertReadingChrome(labels)
     }
 
     private fun verifyPractice(labels: Labels) {
@@ -154,11 +173,19 @@ class QuranVisualAcceptanceTest {
         hide.performClick()
         assertReadableText(labels.reveal)
         compose.onNodeWithText(labels.reveal).performClick()
-        assertNavigation(labels)
+        assertReadingChrome(labels)
     }
 
     private fun navigate(label: String) {
-        compose.onNode(hasText(label) and hasClickAction()).performClick()
+        compose.navigateToRoot(label)
+    }
+
+    private fun assertReadingChrome(labels: Labels) {
+        compose.onNode(hasText(labels.library) and hasClickAction()).assertDoesNotExist()
+        compose.onNode(hasText(labels.qibla) and hasClickAction()).assertDoesNotExist()
+        val options = compose.onNodeWithContentDescription(if (labels == Labels.Arabic) "المزيد من الخيارات" else "More options")
+        options.assertIsDisplayed()
+        assertTouchTarget(options)
     }
 
     private fun assertNavigation(labels: Labels) {
@@ -265,7 +292,7 @@ class QuranVisualAcceptanceTest {
             file.outputStream().use { output -> check(bitmap.compress(Bitmap.CompressFormat.PNG, 100, output)) }
             instrumentation.sendStatus(0, android.os.Bundle().apply { putString("visual_artifact", file.absolutePath) })
             if (verifyPalette) {
-                val expected = if (dark) Color.rgb(14, 25, 20) else Color.rgb(246, 242, 233)
+                val expected = if (dark) Color.rgb(33, 33, 33) else Color.rgb(250, 248, 247)
                 var matches = 0
                 for (y in 0 until bitmap.height step 12) for (x in 0 until bitmap.width step 12) {
                     if ((bitmap.getPixel(x, y) and 0x00ffffff) == (expected and 0x00ffffff)) matches++

@@ -8,9 +8,9 @@ import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.sp
 
 val QuranTypography = Typography(
-    displayLarge = TextStyle(fontFamily = FontFamily.Serif, fontSize = 40.sp, lineHeight = 48.sp),
-    headlineLarge = TextStyle(fontFamily = FontFamily.Serif, fontSize = 30.sp, lineHeight = 40.sp),
-    headlineMedium = TextStyle(fontFamily = FontFamily.Serif, fontSize = 26.sp, lineHeight = 36.sp),
+    displayLarge = TextStyle(fontSize = 32.sp, lineHeight = 40.sp),
+    headlineLarge = TextStyle(fontSize = 24.sp, lineHeight = 32.sp),
+    headlineMedium = TextStyle(fontSize = 22.sp, lineHeight = 30.sp),
     titleLarge = TextStyle(fontSize = 22.sp, lineHeight = 30.sp, fontWeight = FontWeight.SemiBold),
     titleMedium = TextStyle(fontSize = 18.sp, lineHeight = 26.sp, fontWeight = FontWeight.SemiBold),
     bodyLarge = TextStyle(fontSize = 16.sp, lineHeight = 24.sp),

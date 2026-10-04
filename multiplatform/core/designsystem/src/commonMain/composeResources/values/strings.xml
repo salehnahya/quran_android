@@ -182,4 +182,5 @@
     <string name="children_large_text">Children mode keeps Arabic text large.</string>
     <string name="download_removal_failed">Could not finish updating this download. Refresh to check its current status.</string>
     <string name="remove_download_description">Remove %1$s recording for Surah %2$d, Ayah %3$d</string>
+    <string name="navigation_options">More options</string>
 </resources>

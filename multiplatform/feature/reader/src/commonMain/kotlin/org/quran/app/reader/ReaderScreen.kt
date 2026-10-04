@@ -1,5 +1,8 @@
 package org.quran.app.reader
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -19,7 +22,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import org.quran.app.designsystem.QuranStrings
-import org.quran.app.designsystem.ScreenTitle
+import org.quran.app.designsystem.QuranColors
+import org.quran.app.designsystem.QuranText
+import org.quran.app.designsystem.QuranTextVariant
 import org.quran.app.designsystem.appString
 import org.quran.app.model.ReadingPreferences
 import org.quran.app.model.Chapter
@@ -51,7 +56,8 @@ fun ReaderScreen(
     val initialIndex = if (initialAyah <= 1) 0 else initialAyah.coerceAtMost(verses.size)
     val listState = rememberLazyListState(initialFirstVisibleItemIndex = initialIndex)
 
-    BoxWithConstraints(Modifier.fillMaxSize()) {
+    val pageColor = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.background else QuranColors.ReadingPage
+    BoxWithConstraints(Modifier.fillMaxSize().background(pageColor)) {
         val audioHeight = maxHeight * 0.45f
         Column(Modifier.fillMaxSize()) {
             if (listeningState.verseId != null) ReaderAudioCard(
@@ -65,13 +71,12 @@ fun ReaderScreen(
             LazyColumn(
                 state = listState,
                 modifier = Modifier.weight(1f).fillMaxWidth().testTag("reader_list"),
-                verticalArrangement = Arrangement.spacedBy(20.dp),
-                contentPadding = PaddingValues(bottom = 32.dp),
+                verticalArrangement = Arrangement.spacedBy(0.dp),
+                contentPadding = PaddingValues(bottom = 24.dp),
             ) {
                 item {
-                    ScreenTitle(chapter.arabicName, chapter.englishName)
-                    Text(appString(QuranStrings.readerOfflineText), style = MaterialTheme.typography.bodySmall)
-                    translationSummary()
+                    ReaderChapterHeader(chapter)
+                    androidx.compose.foundation.layout.Box(Modifier.padding(horizontal = 16.dp)) { translationSummary() }
                 }
                 items(verses, key = { it.id.ayah }) { verse ->
                     VerseReaderItem(

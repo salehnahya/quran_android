@@ -100,17 +100,23 @@ fun QuranApp(
             LocalLayoutDirection provides if (progress.language.isRtl) LayoutDirection.Rtl else LayoutDirection.Ltr,
             AppLocale provides progress.language,
         ) {
+            val current = navigationStack.last()
+            val readingDestination = current is Reader || current is Practice || current is Study
+            fun navigateTo(destination: androidx.navigation3.runtime.NavKey) {
+                navigationStack.clear()
+                navigationStack.add(destination)
+            }
+            val title = if (current is Reader) {
+                val chapter = quran.chapters().first { it.number == current.surah }
+                if (progress.language.isRtl) chapter.arabicName else chapter.englishName
+            } else appString(QuranStrings.appName)
             ScreenWrapper(
-                title = appString(QuranStrings.appName),
+                title = title,
                 onBack = if (navigationStack.size > 1) ({ navigationStack.removeAt(navigationStack.lastIndex); Unit }) else null,
-                bottomBar = {
-                    AppBottomBar(navigationStack.last()) { destination ->
-                        navigationStack.clear()
-                        navigationStack.add(destination)
-                    }
-                },
+                actions = { if (readingDestination) AppNavigationMenu(::navigateTo) },
+                bottomBar = { if (!readingDestination) AppBottomBar(current, ::navigateTo) },
             ) { insets ->
-                Box(Modifier.padding(insets).padding(horizontal = 20.dp).fillMaxSize()) {
+                Box(Modifier.padding(insets).fillMaxSize()) {
                     NavDisplay(
                         backStack = navigationStack,
                         onBack = { if (navigationStack.size > 1) navigationStack.removeAt(navigationStack.lastIndex) },
@@ -147,45 +153,49 @@ fun QuranApp(
                                 )
                             }
                             entry<Practice> { route ->
-                                MemorizationScreen(
-                                    verse = quran.verses(route.surah)[route.ayah - 1],
-                                    chapterVerses = quran.verses(route.surah),
-                                    progress = progress,
-                                    onMemorized = { saveProgress(progress.copy(memorized = progress.memorized + it)) },
-                                    audioPlayer = audioPlayer,
-                                    onImport = importAudio,
-                                    recitationRepository = recitationModule.repository,
-                                    recitationStorage = recitationModule.storage,
-                                    selectedReciterId = selectedReciterId,
-                                    onReciterSelected = { id -> reciterSelection.select(id); selectedReciterId = id },
-                                )
+                                Box(Modifier.padding(horizontal = 16.dp)) {
+                                    MemorizationScreen(
+                                        verse = quran.verses(route.surah)[route.ayah - 1],
+                                        chapterVerses = quran.verses(route.surah),
+                                        progress = progress,
+                                        onMemorized = { saveProgress(progress.copy(memorized = progress.memorized + it)) },
+                                        audioPlayer = audioPlayer,
+                                        onImport = importAudio,
+                                        recitationRepository = recitationModule.repository,
+                                        recitationStorage = recitationModule.storage,
+                                        selectedReciterId = selectedReciterId,
+                                        onReciterSelected = { id -> reciterSelection.select(id); selectedReciterId = id },
+                                    )
+                                }
                             }
                             entry<Study> { route ->
-                                TutorScreen(quran.verses(route.surah)[route.ayah - 1], progress)
+                                Box(Modifier.padding(horizontal = 16.dp)) { TutorScreen(quran.verses(route.surah)[route.ayah - 1], progress) }
                             }
                             entry<Downloads> {
-                                DownloadsEntry(recitationModule.storage, progress.language)
+                                Box(Modifier.padding(horizontal = 16.dp)) { DownloadsEntry(recitationModule.storage, progress.language) }
                             }
-                            entry<Qibla> { QiblaScreen(progress.language, compass) }
+                            entry<Qibla> { Box(Modifier.padding(horizontal = 16.dp)) { QiblaScreen(progress.language, compass) } }
                             entry<Settings> {
-                                SettingsScreen(
-                                    progress = progress,
-                                    onProgressChange = ::saveProgress,
-                                    readingPreferences = readingPreferences,
-                                    onReadingPreferencesChanged = { updated -> readingPreferencesStore.save(updated); readingPreferences = updated },
-                                    onOpenVerse = { navigationStack.add(Reader(it.surah, it.ayah)) },
-                                    onPracticeVerse = { navigationStack.add(Practice(it.surah, it.ayah)) },
-                                    translationEditions = translationEditions,
-                                    selectedTranslationId = selectedTranslationId,
-                                    isTranslationCatalogLoading = isTranslationCatalogLoading,
-                                    translationCatalogError = if (translationCatalogFailed) appString(QuranStrings.translationCatalogUnavailable) else null,
-                                    onManageDownloads = { navigationStack.add(Downloads) },
-                                    onRefreshTranslationCatalog = ::refreshTranslationCatalog,
-                                    onTranslationSelected = { editionId ->
-                                        translationSelection.selectEdition(editionId)
-                                        selectedTranslationId = editionId
-                                    },
-                                )
+                                Box(Modifier.padding(horizontal = 16.dp)) {
+                                    SettingsScreen(
+                                        progress = progress,
+                                        onProgressChange = ::saveProgress,
+                                        readingPreferences = readingPreferences,
+                                        onReadingPreferencesChanged = { updated -> readingPreferencesStore.save(updated); readingPreferences = updated },
+                                        onOpenVerse = { navigationStack.add(Reader(it.surah, it.ayah)) },
+                                        onPracticeVerse = { navigationStack.add(Practice(it.surah, it.ayah)) },
+                                        translationEditions = translationEditions,
+                                        selectedTranslationId = selectedTranslationId,
+                                        isTranslationCatalogLoading = isTranslationCatalogLoading,
+                                        translationCatalogError = if (translationCatalogFailed) appString(QuranStrings.translationCatalogUnavailable) else null,
+                                        onManageDownloads = { navigationStack.add(Downloads) },
+                                        onRefreshTranslationCatalog = ::refreshTranslationCatalog,
+                                        onTranslationSelected = { editionId ->
+                                            translationSelection.selectEdition(editionId)
+                                            selectedTranslationId = editionId
+                                        },
+                                    )
+                                }
                             }
                         },
                     )

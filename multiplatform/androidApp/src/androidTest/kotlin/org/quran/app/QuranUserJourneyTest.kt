@@ -37,7 +37,7 @@ class QuranUserJourneyTest {
     @After fun closeActivity() { scenario.close() }
 
     private fun navigateTo(label: String) {
-        compose.onNode(hasText(label) and hasClickAction()).performClick()
+        compose.navigateToRoot(label)
     }
 
     private fun openVerseActions(surah: Int = 1, ayah: Int = 1) {
@@ -227,6 +227,20 @@ class QuranUserJourneyTest {
         compose.onNodeWithText("0 ayat marked memorized").assertIsDisplayed()
         compose.onNodeWithTag("settings_list").performScrollToNode(hasText("Memorized verses"))
         compose.onNodeWithTag(reviewTag).assertDoesNotExist()
+    }
+
+    @Test fun fixedIndexTabsAndReaderOverflowKeepReadingAreaClear() {
+        compose.onNodeWithTag("library_list").performScrollToNode(hasTestTag("surah_open_114"))
+        compose.onNodeWithText("Bookmarks").assertIsDisplayed().performClick()
+        compose.onNodeWithText("Surah").performClick()
+        compose.onNodeWithTag("library_list").performScrollToIndex(0)
+        compose.onNodeWithText("Open last read").performClick()
+        compose.onNode(hasText("Library") and hasClickAction()).assertDoesNotExist()
+        compose.onNode(hasText("Qibla") and hasClickAction()).assertDoesNotExist()
+        compose.onNodeWithContentDescription("More options").assertIsDisplayed()
+        compose.onNodeWithTag("reader_verse_1_1").assertIsDisplayed()
+        navigateTo("Settings")
+        compose.onNodeWithText("Reading preferences and saved verses").assertIsDisplayed()
     }
 
     @Test fun nativeMediaServiceCompletesExactlyTwoRealPlaybacks() {

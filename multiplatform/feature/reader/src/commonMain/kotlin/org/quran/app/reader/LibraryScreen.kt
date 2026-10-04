@@ -4,9 +4,12 @@ import androidx.compose.runtime.setValue
 
 import androidx.compose.runtime.getValue
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -17,8 +20,6 @@ import androidx.compose.ui.platform.testTag
 import org.quran.app.designsystem.QuranSpacing
 import org.quran.app.designsystem.QuranTextField
 import org.quran.app.designsystem.QuranStrings
-import org.quran.app.designsystem.QuranText
-import org.quran.app.designsystem.QuranTextVariant
 import org.quran.app.designsystem.appString
 import org.quran.app.model.Juz
 import org.quran.app.model.Chapter
@@ -41,28 +42,30 @@ fun LibraryScreen(
         }
     }
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize().testTag("library_list"),
-        verticalArrangement = Arrangement.spacedBy(QuranSpacing.Medium),
-        contentPadding = PaddingValues(bottom = QuranSpacing.ExtraLarge),
-    ) {
-        item { QuranText(appString(QuranStrings.librarySubtitle), variant = QuranTextVariant.Supporting) }
-        item { ContinueReadingCard(progress.lastRead, onOpen) }
-        item { LibraryTabs(section, onSelect = { section = it }) }
-        if (section == LibrarySection.SURAHS) {
-            item {
-                QuranTextField(
-                    value = query,
-                    onValueChange = { query = it },
-                    label = appString(QuranStrings.searchSurah),
-                    singleLine = true,
-                )
+    Column(Modifier.fillMaxSize()) {
+        LibraryTabs(section, onSelect = { section = it })
+        LazyColumn(
+            modifier = Modifier.weight(1f).fillMaxWidth().testTag("library_list"),
+            verticalArrangement = Arrangement.spacedBy(QuranSpacing.ExtraSmall),
+            contentPadding = PaddingValues(bottom = QuranSpacing.ExtraLarge),
+        ) {
+            item { ContinueReadingCard(progress.lastRead, onOpen) }
+            if (section == LibrarySection.SURAHS) {
+                item {
+                    QuranTextField(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = QuranSpacing.Medium),
+                        value = query,
+                        onValueChange = { query = it },
+                        label = appString(QuranStrings.searchSurah),
+                        singleLine = true,
+                    )
+                }
+                items(filteredChapters, key = Chapter::number) { chapter -> SurahListItem(chapter, onOpen) }
+            } else if (section == LibrarySection.JUZ) {
+                juzItems(juzs, onOpen)
+            } else {
+                bookmarkItems(progress.bookmarks, onOpen)
             }
-            items(filteredChapters, key = Chapter::number) { chapter -> SurahListItem(chapter, onOpen) }
-        } else if (section == LibrarySection.JUZ) {
-            juzItems(juzs, onOpen)
-        } else {
-            bookmarkItems(progress.bookmarks, onOpen)
         }
     }
 }
